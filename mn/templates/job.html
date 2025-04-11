@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job {{ job.id }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        textarea { width: 100%; height: 150px; }
+        .match { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .skills { margin-top: 10px; }
+        button { 
+            padding: 8px 15px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 4px;
+        }
+        button:hover { background: #0056b3; }
+        .skill-match { color: #28a745; }
+        .skill-missing { color: #dc3545; }
+        .back-link { display: block; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">&amp;larr; Back to Home</a>
+    <h1>Job #{{ job.id }}</h1>
+    <h2>{{ job.job_title }}</h2>
+    
+    <h3>Required Skills</h3>
+    <ul>
+        {% for skill in job.skills_required %}
+        <li>{{ skill }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Process Candidate</h2>
+    <form action="/process_candidate/{{ job.id }}" method="post">
+        <div class="form-group">
+            <label for="cv_text">Candidate CV:</label>
+            <textarea name="cv_text" required></textarea>
+        </div>
+        <button type="submit">Process Candidate</button>
+    </form>
+
+    <h2>Matches ({{ matches|length }})</h2>
+    {% for match in matches %}
+    <div class="match">
+        <h3>Candidate #{{ match.candidate_id }} (Score: {{ match.match_score }}%)</h3>
+        <div class="skills">
+            <h4>Matched Skills</h4>
+            <ul class="skill-match">
+                {% for skill in match.matched_skills %}
+                <li>{{ skill }}</li>
+                {% endfor %}
+            </ul>
+            <h4>Missing Skills</h4>
+            <ul class="skill-missing">
+                {% for skill in match.missing_skills %}
+                <li>{{ skill }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>
